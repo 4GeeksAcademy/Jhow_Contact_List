@@ -1,3 +1,58 @@
+
 /* 
-    General Styles
+
+    You can write your own styles here...
+    
+    
+    ...Or you can use the import command to include 
+    other sylesheets into your bunde as well, e.j:
+    
+    import 'relative/path/to/stylesheet.scss';
+
 */
+/* Ocultar el botón de eliminar por defecto */
+.delete-btn {
+    display: none;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Mostrar el botón de eliminar solo cuando el usuario pasa el cursor sobre el li */
+.task-item:hover .delete-btn {
+    display: inline-block;
+}
+
+/* Estilos básicos para la lista */
+.task-item {
+    list-style: none;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.Container{
+    text-align: center;
+    color: gray;
+}
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Estilos para el contenido del modal */
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+  }
