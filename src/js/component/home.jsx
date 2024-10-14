@@ -93,7 +93,7 @@ const Home = () => {
 
   // DELETE: Eliminar un contacto
   const deleteContact = (id) => {
-    fetch(`https://playground.4geeks.com/apis/fake/contact/${id}`, {
+    fetch(`https://playground.4geeks.com/contact/agendas/jhow/contacts/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
