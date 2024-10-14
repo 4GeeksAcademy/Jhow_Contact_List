@@ -32,8 +32,8 @@
     border-radius: 4px;
 }
 .Container{
+    color: rgb(0, 0, 0);
     text-align: center;
-    color: gray;
 }
 .modal {
     display: flex;
@@ -53,6 +53,66 @@
     background-color: white;
     padding: 20px;
     border-radius: 5px;
-    width: 300px;
-    text-align: center;
+    width: 400px;
+    margin-inline: 15px;
+    text-align: left;
+    
   }
+  .add-button{
+    background-color: rgb(13, 211, 13);
+    color: #ddd;
+    border-radius: 20%;
+  }
+  .up{
+    text-align: right;
+    justify-content: end;
+    margin-right: 30px;
+  }
+  .foto{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
+  .update{
+    color: rgb(255, 255, 255);
+    background-color: rgb(147, 147, 243);
+  }
+  .entry{
+    margin-bottom: 20px;
+  }
+
+  .new_contact {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 15px; 
+    border-color: black;
+    border: solid;
+    width: 800px;
+    margin-left: 100px;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .perfil {
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    
+  }
+  
+  ul {
+    list-style-type: none; 
+    padding: 0; 
+  }
+  .li{
+    display: flex;
+    flex-direction: column;
+  }
+  .img{
+text-align: center;
+  }
+ 
+
+  

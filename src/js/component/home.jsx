@@ -10,70 +10,83 @@ const Home = () => {
   });
   const [contacts, setContacts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentContactId, setCurrentContactId] = useState(null);
 
-  // Manejar cambios en los inputs del modal
+  
   const handleInputChange = (e) => {
     setInputValues({ ...inputValues, [e.target.name]: e.target.value });
   };
 
-  // Abrir el modal
+  
   const openModal = () => {
     setIsModalOpen(true);
+    setIsEditMode(false); 
   };
 
-  // Cerrar el modal
+  
   const closeModal = () => {
     setIsModalOpen(false);
+    setInputValues({ name: "", email: "", phone: "", address: "" }); 
+    setCurrentContactId(null); 
   };
 
-  // Manejar el guardado de los datos ingresados en el modal
+  
   const handleSave = () => {
     const { name, email, phone, address } = inputValues;
 
-    // Verificar que todos los campos estén completos
+    
     if (!name || !email || !phone || !address) {
       console.error("Todos los campos son obligatorios");
       return;
     }
 
-    // Crear el objeto para enviar a la API
-    const newContact = {
-      name,
-      email,
-      phone,
-      address,
-    };
+    const newContact = { name, email, phone, address };
 
-    // Hacer la solicitud POST a la API
-    fetch("https://playground.4geeks.com/contact/agendas/jhow/contacts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newContact),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error en la solicitud POST");
-        }
-        return response.json();
+    
+    if (isEditMode) {
+      fetch(`https://playground.4geeks.com/contact/agendas/jhow/contacts/${currentContactId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newContact),
       })
-      .then((data) => {
-        // Actualizar el estado con el nuevo contacto agregado
-        setContacts([...contacts, data]);
-        // Limpiar los valores del modal
-        setInputValues({
-          name: "",
-          email: "",
-          phone: "",
-          address: "",
-        });
-        closeModal(); // Cerrar el modal
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la solicitud PUT");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setContacts(contacts.map(contact => (contact.id === currentContactId ? data : contact))); // Actualizar el contacto en la lista
+          closeModal(); // Cerrar el modal
+        })
+        .catch((error) => console.error("Error al editar contacto:", error));
+    } else {
+      
+      fetch("https://playground.4geeks.com/contact/agendas/jhow/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newContact),
       })
-      .catch((error) => console.error("Error al agregar contacto:", error));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la solicitud POST");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setContacts([...contacts, data]); 
+          closeModal(); 
+        })
+        .catch((error) => console.error("Error al agregar contacto:", error));
+    }
   };
 
-  // GET: Obtener contactos del servidor
+  
   const getUserContacts = () => {
     fetch("https://playground.4geeks.com/contact/agendas/jhow", {
       method: "GET",
@@ -85,13 +98,11 @@ const Home = () => {
         return response.json();
       })
       .then((result) => {
-        // Acceder a la propiedad contacts de la respuesta
         setContacts(result.contacts);
       })
       .catch((error) => console.error("Error al obtener contactos:", error));
   };
 
-  // DELETE: Eliminar un contacto
   const deleteContact = (id) => {
     fetch(`https://playground.4geeks.com/contact/agendas/jhow/contacts/${id}`, {
       method: "DELETE",
@@ -104,52 +115,68 @@ const Home = () => {
       .catch((error) => console.error("Error al eliminar contacto:", error));
   };
 
-  // useEffect Hooks: Obtener contactos al cargar el componente
+  const openEditModal = (contact) => {
+    setInputValues({
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      address: contact.address,
+    });
+    setCurrentContactId(contact.id);
+    setIsEditMode(true);
+    setIsModalOpen(true);
+  };
+
   useEffect(() => {
     getUserContacts();
   }, []);
 
   return (
     <div className="Container">
-      <h1>Contact List</h1>
-      
-      <button onClick={openModal}>Agregar Nuevo Contacto</button>
-
+      <h1>AGENDA DE CONTACTOS</h1>
+      <div className="up"> 
+      <button onClick={openModal} className="add-button">Agregar Nuevo Contacto</button>
+      </div>
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <h2>Nuevo Contacto</h2>
-            <input
+            <h2>{isEditMode ? "Editar Contacto" : "Nuevo Contacto"}</h2>
+            <img
+    className="foto"
+    src="https://cdn3.pixelcut.app/1/3/profile_picture_1728ecf2bd.jpg"
+    alt="perfil"
+  />
+            <label for="name">Nombre Completo</label>
+            <input 
               type="text"
               name="name"
-              placeholder="Full Name"
               value={inputValues.name}
               onChange={handleInputChange}
             />
-            <input
+            <label for="name">E-mail</label>
+            <input 
               type="email"
               name="email"
-              placeholder="Email"
               value={inputValues.email}
               onChange={handleInputChange}
             />
-            <input
+            <label for="name">Teléfono</label>
+            <input 
               type="text"
               name="phone"
-              placeholder="Phone"
               value={inputValues.phone}
               onChange={handleInputChange}
             />
-            <input
+            <label for="name">Dirección</label>
+            <input className="entry"
               type="text"
               name="address"
-              placeholder="Address"
               value={inputValues.address}
               onChange={handleInputChange}
             />
-            <button onClick={handleSave}>Guardar Contacto</button>
-            <button onClick={closeModal}>Cerrar</button>
-          </div>
+            <button className="update" onClick={handleSave}>{isEditMode ? "Actualizar Contacto" : "Guardar Contacto"}</button>
+            <button onClick={closeModal}>Regresar</button>
+            </div>
         </div>
       )}
 
@@ -158,10 +185,21 @@ const Home = () => {
           <li>No hay contactos, añade uno</li>
         ) : (
           contacts.map((contact, index) => (
-            <li key={index}>
-              {contact.name} - {contact.email} - {contact.phone} - {contact.address}
-              <button onClick={() => deleteContact(contact.id)}>🗑️</button>
-            </li>
+            <div className="new_contact" key={index}>
+  <li>
+    <h5>Nombre: {contact.name}</h5>
+    <h5>E-mail: {contact.email}</h5>
+    <h5>Teléfono: {contact.phone}</h5>
+    <h5>Dirección: {contact.address}</h5>
+  </li>
+  <img
+    className="perfil"
+    src="https://cdn3.pixelcut.app/1/3/profile_picture_1728ecf2bd.jpg"
+    alt="perfil"
+  />
+  <button  onClick={() => openEditModal(contact)}>✏️ Editar</button>
+  <button  onClick={() => deleteContact(contact.id)}>🗑️ Eliminar</button>
+</div>
           ))
         )}
       </ul>
